@@ -20,7 +20,7 @@ import ssl
 class DownLoadVideo:
     def __init__(self):
         ssl._create_default_https_context = ssl._create_unverified_context
-        self.url = "https://fcww9.com"
+        self.url = ""
 
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('--headless')

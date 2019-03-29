@@ -37,7 +37,7 @@ from contextlib import closing
 
 class DownLoadVideo:
     def __init__(self):
-        self.url = "https://fcww9.com"
+        self.url = ""
 
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('--headless')
@@ -45,7 +45,7 @@ class DownLoadVideo:
         # driver=webdriver.Firefox(executable_path = '/usr/local/lib/python3.6/geckodriver')
         self.driver = webdriver.Chrome(executable_path=r'C:\Users\Administrator\Desktop\macAndWin\开发工具\win\chromedriver.exe', chrome_options=chrome_options)
         self.driver.implicitly_wait(10)
-        self.path = r'C:\Users\Administrator\Desktop\macAndWin\开发工具\mac\other\1'
+        self.path = r''
 
 
     def _downloader(self, video_url, path):
@@ -148,7 +148,7 @@ class DownLoadVideo:
 
         t = time.time()
         nowdate = lambda:int(round(t * 1000))
-        netPageUrl = requestUrl + '?mode=async&function=get_block&block_id=list_videos_latest_videos_list&sort_by=post_date&from=%s&_=%s' % (page, nowdate)
+        #netPageUrl = requestUrl + (page, nowdate)
         print("下载完毕")
         self.downloadPage(netPageUrl, page)
 

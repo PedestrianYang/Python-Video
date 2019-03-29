@@ -18,8 +18,8 @@ from video.Downloader import Downloader
 class Reques:
     def __init__(self):
         ssl._create_default_https_context = ssl._create_unverified_context
-        self.oriUrl = "https://github.com/fcwporn/-/wiki"
-        self.temptargetUrl = "https://fcww11.com"
+        self.oriUrl = ""
+        self.temptargetUrl = ""
 
 
     def getTargetUrl(self):

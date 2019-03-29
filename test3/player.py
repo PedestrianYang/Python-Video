@@ -95,7 +95,7 @@ class VideoPlayer(QWidget):
 
     def initViedoPayer(self):
         #获得视频的格式
-        self.videoCapture = cv2.VideoCapture('/Users/iyunshu/Desktop/aaaaaa/【网曝门事件】最近火爆朋友圈600分女孩淫乱群P不雅视频流出 挑战更强极限 聊天记录15P 高清无水印完整版.mp4')
+        self.videoCapture = cv2.VideoCapture('')
 
         #获得码率及尺寸
         fps = self.videoCapture.get(cv2.CAP_PROP_FPS)
