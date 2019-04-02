@@ -1,59 +1,28 @@
-# -*- coding: utf-8 -*-
+
+import cv2
 
 
-import logging
-import os
-from time import sleep
-
-# 屏幕分辨率
-device_x, device_y = 1920, 1080
-
-# 通关模式：1=重新挑战 -> 挑战界面，2=重新挑战-> 更换阵容
-game_mode = 2
-
-# 各步骤等待间隔
-step_wait = [3, 13, 24, 3, 3]
-
-# 刷金币次数
-repeat_times = 60
-
-# 日志输出
-logging.basicConfig(format='%(asctime)s %(message)s',
-                    datefmt='%m/%d/%Y %I:%M:%S %p',
-                    level=logging.DEBUG)
+def nothing(emp):
+    pass
 
 
-def tap_screen(x, y):
-    """calculate real x, y according to device resolution."""
-    base_x, base_y = 1920, 1080
-    real_x = int(x / base_x * device_x)
-    real_y = int(y / base_y * device_y)
-    os.system('adb shell input tap {} {}'.format(real_x, real_y))
+video = 'https://fuli.zuida-youku-le.com/20180626/28918_0b931ffd/index.m3u8'
+cv2.namedWindow('video')
+cap = cv2.VideoCapture(video)
+frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+loop_flag = 0
+pos = 0
+cv2.createTrackbar('time', 'video', 0, frames, nothing)
 
-
-def do_money_work():
-    if game_mode == 1:
-        logging.debug('#0 start the game')
-        tap_screen(1600, 970)
-        sleep(step_wait[0])
-
-    logging.debug('#1 ready, go!!!')
-    tap_screen(1450, 910)
-    sleep(step_wait[1])
-
-    logging.debug('#2 auto power on!')
-    tap_screen(1780, 40)
-
-    for i in range(step_wait[2]):
-        tap_screen(1720, 80)
-        sleep(1)
-
-    logging.debug('#3 do it again...\n')
-    tap_screen(1600, 980)
-    sleep(step_wait[4])
-
-
-if __name__ == '__main__':
-    for i in range(repeat_times):
-        logging.info('round #{}'.format(i + 1))
-        do_money_work()
+while 1:
+    if loop_flag == pos:
+        loop_flag = loop_flag + 1
+        cv2.setTrackbarPos('time', 'video', loop_flag)
+    else:
+        pos = cv2.getTrackbarPos('time', 'video')
+        loop_flag = pos
+        cap.set(cv2.CAP_PROP_POS_FRAMES, pos)
+    ret, img = cap.read()
+    cv2.imshow('video', img)
+    if cv2.waitKey(1) & loop_flag == frames:
+        break

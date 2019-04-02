@@ -150,7 +150,7 @@ class VideoPlayer(QWidget):
 
 
     def playBtnClick(self):
-        playUrl = self.inputText.text()
+        playUrl = videopaa
         downloadPath = path + '0.mp4'
         self.downloaderThread = DownloaderThread(playUrl, downloadPath)
         self.downloaderThread.start()
