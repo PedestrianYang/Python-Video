@@ -14,32 +14,12 @@ import time
 class Request11:
     def __init__(self):
         ssl._create_default_https_context = ssl._create_unverified_context
-        self.oriUrl = "https://github.com/fcwporn/-/wiki"
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--headless')
-
-        # driver=webdriver.Firefox(executable_path = '/usr/local/lib/python3.6/geckodriver')
-        self.driver = webdriver.Chrome(executable_path='/usr/local/lib/python3.6/chromedriver', options=chrome_options)
-        self.driver.implicitly_wait(10)
-
+        self.temptargetUrl = ""
         self.path = "/Users/iyunshu/Desktop/aaaaaa/"
 
+    def getTitle(self):
 
-    def getTargetUrl(self):
-        rep = self.doRequest(self.oriUrl)
-        soup1 = BeautifulSoup(rep,"html.parser")
-        div = soup1.find(attrs={'class':'markdown-body'})
-        hres = div.findAll('a')
-        urls = []
-        for a in hres:
-            if a.string.startswith('https://fcw') or a.string.startswith('http://fcw'):
-                urls.append(a.string)
-
-        self.getTitle(urls[1])
-
-    def getTitle(self, url):
-
-        rep = self.doRequest(url)
+        rep = self.doRequest(self.temptargetUrl)
         soup1 = BeautifulSoup(rep,"html.parser")
         hres = soup1.findAll("a")
         a = None
@@ -76,9 +56,10 @@ class Request11:
 
     def downLoad(self, videoUrl):
         print("111111")
-        self.driver.get(videoUrl)
+        # self.driver.get(videoUrl)
+        rep = self.doRequest(videoUrl)
         print("222222")
-        soup1 = BeautifulSoup(self.driver.page_source, "html.parser")
+        soup1 = BeautifulSoup(rep, "html.parser")
         print("333333")
         items = soup1.findAll('a')
 
@@ -128,4 +109,4 @@ class Request11:
 
 if __name__ == '__main__':
     req = Request11()
-    req.getTargetUrl()
+    req.getTitle()

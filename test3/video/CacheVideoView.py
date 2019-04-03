@@ -2,13 +2,41 @@ from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from video.CacheManager import *
 from video.VideoView import *
+from selenium import webdriver
+from bs4 import BeautifulSoup
+from video.request import *
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
+class GetDownloadUrlThread(QThread):
+    def __init__(self, video):
+        QThread.__init__(self)
+        self.video = video
+        self.db = CacheManager()
+        self.request = Reques()
+
+    def run(self):
+        resp = self.request.doRequest(self.video.videoUrl)
+        soup1 = BeautifulSoup(resp, "html.parser")
+
+        items = soup1.findAll('a')
+
+        dowloadUrl = None
+        for item in items:
+            href = item.get('href')
+            if href != None and href.endswith('.mp4'):
+                dowloadUrl = href
+                break
+        self.db.updateVideoDownLoadUrl(self.video, dowloadUrl)
+
+
+
 
 class LoadImageThread(QThread):
     singal = Signal()
     def __init__(self, url):
         QThread.__init__(self)
         self.url = url
-
 
     def run(self):
 
@@ -22,14 +50,21 @@ class LoadImageThread(QThread):
         self.singal.emit()
 
 class ItemView(QWidget):
-
-    def __init__(self, video):
+    deleteBtnClickSingal = Signal(int)
+    def __init__(self, video, index):
         QWidget.__init__(self)
         self.video = video
+        self.index = index
+        if video.downUrl == None:
+            self.getDownUrlThreead = GetDownloadUrlThread(video)
+            self.getDownUrlThreead.start()
+            self.getDownUrlThreead.finished.connect(self.threadDestoryAction)
         self.container()
 
-    def loadimage(self):
+    def threadDestoryAction(self):
+        self.getDownUrlThreead.deleteLater()
 
+    def loadimage(self):
         label = QLabel()
         label.setMinimumSize(60, 60)
         label.setPixmap(self.loadImagethread.pixmap)
@@ -39,7 +74,25 @@ class ItemView(QWidget):
         nameL.setText(self.video.name)
         self.b_layout.addWidget(nameL)
 
+        conntrol_h_box = QHBoxLayout()
 
+        playBtn = QPushButton('在线播放')
+        playBtn.clicked.connect(self.playBtnClick)
+        conntrol_h_box.addWidget(playBtn)
+
+
+        deleteBtn = QPushButton('删除记录')
+        deleteBtn.clicked.connect(self.deleteBtnClick)
+        conntrol_h_box.addWidget(deleteBtn)
+
+        self.b_layout.addLayout(conntrol_h_box)
+
+    def playBtnClick(self):
+        self.playerView = VideoPlayer(self.video.downUrl)
+        self.playerView.show()
+
+    def deleteBtnClick(self):
+        self.deleteBtnClickSingal.emit(self.index)
 
 
     def aaaaa(self):
@@ -88,14 +141,17 @@ class CacheVideoView(QWidget):
 
         for i in range(len(self.videoModes)):
             videoMode = self.videoModes[i]
-            videoView = ItemView(videoMode)
-
+            videoView = ItemView(videoMode, i)
+            videoView.deleteBtnClickSingal.connect(self.deleteCacheVideo)
             tempItem = QListWidgetItem()
-            tempItem.setSizeHint(QSize(100, 100))
-
+            tempItem.setSizeHint(QSize(100, 150))
             self.listView.addItem(tempItem)
             self.listView.setItemWidget(tempItem, videoView)
 
+    def deleteCacheVideo(self, index):
+        videoMode = self.videoModes[index]
+        self.db.deleteVideo(videoMode)
+        self.listView.takeItem(index)
 
     def cleanCache(self):
         self.db.cleanCache()

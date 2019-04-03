@@ -21,10 +21,18 @@ import aiohttp
 import ssl
 import threading
 import time
-
+from selenium import webdriver
+from bs4 import BeautifulSoup
 
 ssl._create_default_https_context = ssl._create_unverified_context
 path = "/Users/iyunshu/Desktop/aaaaaa/"
+
+
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('--headless')
+driver = webdriver.Chrome(executable_path='/usr/local/lib/python3.6/chromedriver', options=chrome_options)
+driver.implicitly_wait(10)
+
 
 
 class MyThread(QThread):
@@ -48,7 +56,6 @@ class LoadImageThread(QThread):
     def __init__(self, url):
         QThread.__init__(self)
         self.url = url
-
 
     def run(self):
 
@@ -118,6 +125,9 @@ class ItemView(QWidget):
         self.aaaaa()
 
     def mousePressEvent(self, event):
+        if self.video.downUrl == None:
+            print('还未获取下载地址')
+            return
         self.downloaderThread = VideoDownloadThread(self.video)
         self.downloaderThread.start()
         self.downloaderThread.singal.connect(self.downloadComplete)
@@ -150,9 +160,6 @@ class MainUIaa(QWidget):
         # self.grid = QGridLayout()
         self.listView = QListWidget()
         self.container()
-
-
-
 
     def container(self):
         b_Box = QVBoxLayout()
@@ -226,7 +233,6 @@ class MainUIaa(QWidget):
             videoView.singal.connect(self.listItemClick)
             videoView.downloadCompleteSingal.connect(self.downloadComplete)
 
-
             self.listView.addItem(tempItem)
             self.listView.setItemWidget(tempItem, videoView)
 
@@ -234,11 +240,11 @@ class MainUIaa(QWidget):
         self.downloadThreads.append(view.downloaderThread)
 
     def downloadComplete(self, view):
-        print(self.listView.row(view.tempItemView))
+
         self.downloadThreads.remove(view.downloaderThread)
         view.downloaderThread.deleteLater()
         view.downloaderThread = None
-        self.listView.takeItem(self.listView.row(view.tempItemView))
+        # self.listView.takeItem(self.listView.row(view.tempItemView))
 
 
 

@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 from PySide2.QtCore import *
 import ssl
 import time
+from video.request import *
 
 class Downloader(QObject):
     downloadProgressSingal = Signal(float)
@@ -16,24 +17,27 @@ class Downloader(QObject):
         ssl._create_default_https_context = ssl._create_unverified_context
         self.video_url = video_url
         self.path = path
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--headless')
-
-        # driver=webdriver.Firefox(executable_path = '/usr/local/lib/python3.6/geckodriver')
-        self.driver = webdriver.Chrome(executable_path='/usr/local/lib/python3.6/chromedriver', options=chrome_options)
-        self.driver.implicitly_wait(10)
-        self.progress = 0
-        self.stop = False
-        self.close = False
-        self.isDownloading = False
+        self.request = Reques()
+        # chrome_options = webdriver.ChromeOptions()
+        # chrome_options.add_argument('--headless')
+        #
+        # # driver=webdriver.Firefox(executable_path = '/usr/local/lib/python3.6/geckodriver')
+        # self.driver = webdriver.Chrome(executable_path='/usr/local/lib/python3.6/chromedriver', options=chrome_options)
+        # self.driver.implicitly_wait(10)
+        # self.progress = 0
+        # self.stop = False
+        # self.close = False
+        # self.isDownloading = False
 
 
 
     def downLoad(self):
 
-        self.driver.get(self.video_url)
+        # self.driver.get(self.video_url)
+        # soup1 = BeautifulSoup(self.driver.page_source, "html.parser")
 
-        soup1 = BeautifulSoup(self.driver.page_source, "html.parser")
+        resp = self.request.doRequest(self.video.videoUrl)
+        soup1 = BeautifulSoup(resp, "html.parser")
 
         items = soup1.findAll('a')
         dowloadUrl = None
@@ -55,9 +59,7 @@ class Downloader(QObject):
         if os.path.exists(self.path):
             Header['Range'] = 'bytes=%d-' % os.path.getsize(self.path)
             size = os.path.getsize(self.path)
-
-        print(size)
-
+        print('开始下载')
         with closing(requests.get(dowloadUrl, headers=Header, stream=True, verify=False)) as response:
             chunk_size = 1024
             content_size = int(response.headers['content-length'])
@@ -65,15 +67,18 @@ class Downloader(QObject):
                 print("文件已存在")
                 return
 
-            if response.status_code == 200:
+
+            if response.status_code == 200 or response.status_code == 206:
                 self.content_size = content_size/chunk_size / 1024
                 self.isDownloading = True
 
                 with open(self.path, 'wb') as f:
                     for data in response.iter_content(chunk_size=chunk_size):
                         if self.close == True:
+                            self.isDownloading = False
                             break
                         if self.stop == True:
+                            self.isDownloading = False
                             while self.stop:
                                 time.sleep(1)
 

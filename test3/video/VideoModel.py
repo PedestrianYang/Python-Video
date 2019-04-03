@@ -1,7 +1,8 @@
 class Video:
-    def __init__(self, name, imgUrl, downUrl):
+    def __init__(self, name, imgUrl, videoUrl, downUrl = None):
         self.name = name
         self.imgUrl = imgUrl
+        self.videoUrl = videoUrl
         self.downUrl = downUrl
 
 

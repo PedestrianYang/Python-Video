@@ -5,11 +5,13 @@ tablename = 'Video'
 class CacheManager:
     def __init__(self):
         self.db = pymysql.connect("localhost","root","root","test" )
+
         cursor = self.db.cursor()
         sql = """CREATE TABLE IF NOT EXISTS %s (
-         NAME  CHAR(20) NOT NULL,
-         IMAGEURL  CHAR(20),
-         DOWNLOADURL  CHAR(20))""" % tablename
+         NAME  CHAR(200) NOT NULL COLLATE utf8_unicode_ci,
+         IMAGEURL  CHAR(200) COLLATE utf8_unicode_ci,
+         VIDEOURL  CHAR(200) COLLATE utf8_unicode_ci,
+         DOWNLOADURL  CHAR(200) COLLATE utf8_unicode_ci)""" % tablename
         cursor.execute(sql)
 
     def insertVideo(self, video):
@@ -17,9 +19,9 @@ class CacheManager:
         exsit = self.selectByName(video.name)
         if exsit == False:
             sql = "INSERT INTO %s(NAME, \
-            IMAGEURL, DOWNLOADURL) \
+            IMAGEURL, VIDEOURL) \
             VALUES ('%s', '%s',  '%s')" % \
-              (tablename, video.name, video.imgUrl, video.downUrl)
+              (tablename, video.name, video.imgUrl, video.videoUrl)
             try:
                 cursor.execute(sql)
                 self.db.commit()
@@ -33,6 +35,18 @@ class CacheManager:
     def cleanCache(self):
         cursor = self.db.cursor()
         sql1 = 'DELETE FROM %s' % tablename
+        sql2 = ' truncate table %s' % tablename
+        try:
+            cursor.execute(sql1)
+            cursor.execute(sql2)
+            self.db.commit()
+        except:
+            self.db.rollback()
+
+
+    def deleteVideo(self, video):
+        cursor = self.db.cursor()
+        sql1 = 'DELETE FROM %s WHERE NAME = %s' % (tablename, video.name)
         sql2 = ' truncate table %s' % tablename
         try:
             cursor.execute(sql1)
@@ -63,7 +77,7 @@ class CacheManager:
             results = cursor.fetchall()
             videos = []
             for row in results:
-                video = Video(row[0], row[1], row[2])
+                video = Video(row[0], row[1], row[2], row[3])
                 videos.append(video)
             return videos
 
