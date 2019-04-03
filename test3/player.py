@@ -15,37 +15,41 @@ from contextlib import closing
 import ssl
 
 ssl._create_default_https_context = ssl._create_unverified_context
-class DownloadMyThread(QThread):
-    singal = Signal(float)
-    complete = Signal()
-    def __init__(self, video, videoWriter):
-        QThread.__init__(self)
-        self.videoCapture = video
-        self.videoWriter = videoWriter
-        self.videoFrames = []
+
+#问题难点
+#1.播放视频时放在主线程产生卡顿（循环读取播放流），播放业务需要放在子线程中进行
+#2.初始化播放器，需要放在主线程中，放在子线程则不响应（待定问题）
+#3.跳帧处理，定位视频播放时间时，需要在循环内部进行set关键帧，然后立即发出信号槽通知播放进度条与时间，由于子线程原因，可能导致进度条跳动
+#4.QSlider作为播放进度条，鼠标左键点击不能响应事件，必须重写mousePressEvent点击事件与mouseReleaseEvent点击松开事件
 
 
-    def run(self):
+class MyQSlider(QSlider):
+    clickSingal = Signal(int)
+    releaseSingal = Signal(int)
+    def __init__(self, *args, **kwargs):
+        QSlider.__init__(self, *args, **kwargs)
 
-        self.fps = self.videoCapture.get(cv2.CAP_PROP_FPS)
-        self.fps_num = self.videoCapture.get(cv2.CAP_PROP_FRAME_COUNT)
-        success, frame = self.videoCapture.read()
-        count = 0
-        while success:
 
-            if self.videoWriter.isOpened() == False:
-                self.videoWriter.open(self.videPath, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), self.fps, self.size)
-            self.videoWriter.write(frame) #写视频帧
-            if count > 0 and (count % (int(self.fps) * 10)) == 0:
-                self.videoWriter.release()
-                self.videPath = 'oto_other.mp4'
+    def mousePressEvent(self, event:QMouseEvent):
+        if event.button() == Qt.LeftButton:
+            dur = self.maximum() - self.minimum()
+            pos = self.minimum() + dur * (event.x() / self.width())
+            if pos != self.sliderPosition():
+                self.setValue(int(pos))
+                print(int(pos))
+                self.clickSingal.emit(int(pos))
 
-            self.videoWriter.write(frame)
-            count += 1
-            self.singal.emit(count / self.fps_num)
-            success, frame = self.videoCapture.read()
 
-        self.complete.emit()
+    def mouseReleaseEvent(self,event):
+        if event.button() == Qt.LeftButton:
+            dur = self.maximum() - self.minimum()
+            pos = self.minimum() + dur * (event.x() / self.width())
+            if pos != self.sliderPosition():
+                self.setValue(pos)
+                print(self.value())
+                self.releaseSingal.emit(int(pos))
+
+
 
 
 class MyThread(QThread):
@@ -105,10 +109,12 @@ class VideoPlayer(QWidget):
         self.labe = QLabel()
         v_box.addWidget(self.labe)
 
-        self.progressBar = QSlider(Qt.Horizontal)
+        self.progressBar = MyQSlider(Qt.Horizontal)
         self.progressBar.setFixedSize(int(self.videoCapture.get(cv2.CAP_PROP_FRAME_WIDTH)) / 2, 20)
         self.progressBar.setRange(0,99)
 
+        self.progressBar.clickSingal.connect(self.progressBarClick)
+        self.progressBar.releaseSingal.connect(self.valueChangeComplete)
         self.progressBar.sliderMoved.connect(self.progressBarValueChange)
         self.progressBar.sliderReleased.connect(self.valueChangeComplete)
         v_box.addWidget(self.progressBar)
@@ -125,13 +131,13 @@ class VideoPlayer(QWidget):
         v_box.addWidget(self.timeLab)
 
         h_box = QHBoxLayout()
-        stopBtn = QPushButton('播放')
-        stopBtn.clicked.connect(self.stopBtnClick)
-        h_box.addWidget(stopBtn)
+        self.stopBtn = QPushButton('停止')
+        self.stopBtn.clicked.connect(self.stopBtnClick)
+        h_box.addWidget(self.stopBtn)
 
-        closeBtn = QPushButton('关闭')
-        closeBtn.clicked.connect(self.closeBtnClick)
-        h_box.addWidget(closeBtn)
+        self.closeBtn = QPushButton('关闭')
+        self.closeBtn.clicked.connect(self.closeBtnClick)
+        h_box.addWidget(self.closeBtn)
 
         v_box.addLayout(h_box)
 
@@ -139,6 +145,19 @@ class VideoPlayer(QWidget):
         self.threadqqq.start()
         self.threadqqq.singal.connect(self.thresetContainer)
         self.threadqqq.complete.connect(self.deleteThread)
+
+
+    def progressBarClick(self,vaule):
+        print('progressBarClick')
+        self.isSliding = True
+        self.slidvalue = vaule
+        progress = self.slidvalue / 100 * self.fps_num
+        currntTime = self.timeAmount * (progress / self.fps_num)
+        m, s = divmod(currntTime, 60)
+        h, m = divmod(m, 60)
+        currntTimeFormt = "%02d:%02d:%02d" % (h, m, s)
+        self.timeLab.setText(currntTimeFormt+ '/' + self.amutnTimeFormt)
+
 
     def progressBarValueChange(self, vaule):
         print('progressBarValueChange')
@@ -186,14 +205,14 @@ class VideoPlayer(QWidget):
         self.videoWriter = cv2.VideoWriter('oto_other.mp4', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), self.fps, size)
 
     def stopBtnClick(self):
-
         if self.threadqqq != None:
             if self.threadqqq.isRunning():
                 self.threadqqq.terminate()
+                self.stopBtn.setText("播放")
             else:
                 self.threadqqq.start()
+                self.stopBtn.setText("停止")
         else:
-
             self.initViedoPayer()
             self.threadqqq = MyThread(self.videoCapture,self.fps)
             self.threadqqq.start()
@@ -204,18 +223,19 @@ class VideoPlayer(QWidget):
         print(self.threadqqq)
         if self.threadqqq != None:
             self.threadqqq.isRun = False
+            self.stopBtn.setText("播放")
 
 
     def deleteThread(self):
-
-        print("delete")
+        self.videoCapture.release()
         self.threadqqq.deleteLater()
         self.threadqqq = None
-        print()
 
 
     def thresetContainer(self, progress):
+
         if self.isSliding == False:
+
             currntTime = self.timeAmount * (progress / self.fps_num)
             m, s = divmod(currntTime, 60)
             h, m = divmod(m, 60)
