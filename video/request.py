@@ -2,18 +2,9 @@ from VideoModel import Video, Title
 
 __author__ = 'ymq'
 import urllib.request
-from selenium import webdriver
 import urllib
-import sys
-import re
-import time
-
-import os.path
-import requests
 from bs4 import BeautifulSoup
-from contextlib import closing
 import ssl
-from Downloader import Downloader
 
 class Reques:
     def __init__(self):

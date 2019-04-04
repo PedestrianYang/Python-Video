@@ -1,41 +1,42 @@
 
 import os.path
-import requests
-import sys
-from contextlib import closing
-from selenium import webdriver
+import ssl
 from bs4 import BeautifulSoup
 from PySide2.QtCore import *
-import ssl
+from request import Reques
+from contextlib import closing
+import time
+import requests
 
-class FooConnection(QObject):
-    #Signal 创建必须在QObject类中进行
-    foosignal = Signal(float)
-
-class Downloader:
-
-    downloadSingle = FooConnection()
-
+class Downloader(QObject):
+    downloadProgressSingal = Signal(float)
     def __init__(self, video_url, path):
+        QObject.__init__(self)
         ssl._create_default_https_context = ssl._create_unverified_context
         self.video_url = video_url
         self.path = path
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--headless')
-
-        # driver=webdriver.Firefox(executable_path = '/usr/local/lib/python3.6/geckodriver')
-        self.driver = webdriver.Chrome(executable_path='/usr/local/lib/python3.6/chromedriver', options=chrome_options)
-        self.driver.implicitly_wait(10)
+        self.request = Reques()
+        # chrome_options = webdriver.ChromeOptions()
+        # chrome_options.add_argument('--headless') #使用浏览器加载，却不用打开
+        #
+        # # driver=webdriver.Firefox(executable_path = '/usr/local/lib/python3.6/geckodriver')
+        # self.driver = webdriver.Chrome(executable_path='/usr/local/lib/python3.6/chromedriver', options=chrome_options)
+        # self.driver.implicitly_wait(10)
         self.progress = 0
+        self.stop = False
+        self.close = False
+        self.isDownloading = False
 
 
 
     def downLoad(self):
-        print("111111")
-        self.driver.get(self.video_url)
-        print("222222")
-        soup1 = BeautifulSoup(self.driver.page_source, "html.parser")
-        print("333333")
+
+        # self.driver.get(self.video_url) #获取浏览器内容
+        # soup1 = BeautifulSoup(self.driver.page_source, "html.parser")
+
+        resp = self.request.doRequest(self.video_url)
+        soup1 = BeautifulSoup(resp, "html.parser")
+
         items = soup1.findAll('a')
         dowloadUrl = None
         for item in items:
@@ -43,6 +44,8 @@ class Downloader:
             if href != None and href.endswith('.mp4'):
                 dowloadUrl = href
                 break
+
+        print(dowloadUrl)
         self._downloader(dowloadUrl)
 
     def _downloader(self, dowloadUrl):
@@ -56,7 +59,7 @@ class Downloader:
         if os.path.exists(self.path):
             Header['Range'] = 'bytes=%d-' % os.path.getsize(self.path)
             size = os.path.getsize(self.path)
-
+        print('开始下载')
         with closing(requests.get(dowloadUrl, headers=Header, stream=True, verify=False)) as response:
             chunk_size = 1024
             content_size = int(response.headers['content-length'])
@@ -64,17 +67,30 @@ class Downloader:
                 print("文件已存在")
                 return
 
-            if response.status_code == 200:
+
+            if response.status_code == 200 or response.status_code == 206:
                 self.content_size = content_size/chunk_size / 1024
-                sys.stdout.write('[File Size]: %0.2f MB\n' % (self.content_size))
+                self.isDownloading = True
+
                 with open(self.path, 'wb') as f:
                     for data in response.iter_content(chunk_size=chunk_size):
+                        if self.close == True:
+                            self.isDownloading = False
+                            break
+                        if self.stop == True:
+                            self.isDownloading = False
+                            while self.stop:
+                                time.sleep(1)
+
                         f.write(data)
                         size += len(data)
                         f.flush()
-
                         self.progress = float(size/content_size * 100)
+                        self.downloadProgressSingal.emit(self.progress )
                         # self.downloadSingle.foosignal.emit(progress)
 
-                        # sys.stdout.write('\r[Progress]: %0.2f%%' % )
-                        # sys.stdout.flush()
+
+    def downloadCancel(self):
+        self.close = True
+
+

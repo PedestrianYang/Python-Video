@@ -2,12 +2,12 @@
 from PySide2.QtWidgets import *
 
 from PySide2.QtCore import *
+from PlayerView import *
 
 import threading
 import time
 import inspect
 import ctypes
-
 
 class DownManagerView(QWidget):
     def __init__(self, downloaderThread):
@@ -23,39 +23,41 @@ class DownManagerView(QWidget):
         v_box.addWidget(self.listView)
         self.setLayout(v_box)
         for downloadThread in self.downloaderThread:
-            item = DownloadItemView(downloadThread)
             tempItem = QListWidgetItem()
-            tempItem.setSizeHint(QSize(100, 100))
+            tempItem.setSizeHint(QSize(100, 150))
+            item = DownloadItemView(downloadThread, tempItem)
+            item.deleteSingal.connect(self.deleteDownload)
+
             self.listView.addItem(tempItem)
             self.listView.setItemWidget(tempItem, item)
 
+    def deleteDownload(self, videoView):
+        if videoView.videoDownloadThread != None and videoView.videoDownloadThread.downLoader.isDownloading:
+            videoView.videoDownloadThread.downLoader.downloadCancel()
+        else:
+            videoView.videoDownloadThread.downLoader.deleteLater()
+            videoView.videoDownloadThread.quit()
+            videoView.videoDownloadThread.deleteLater()
+
+        self.listView.takeItem(self.listView.row(videoView.tempItemView))
+
+
+
+
+
 class DownloadItemView(QWidget):
-    def __init__(self, videoDownloadThread):
+    deleteSingal = Signal(QWidget)
+    def __init__(self, videoDownloadThread, tempItemView):
         QWidget.__init__(self)
         self.videoDownloadThread = videoDownloadThread
+        self.tempItemView = tempItemView
         self.setContent()
-
-    def _async_raise(self, tid, exctype):
-        """raises the exception, performs cleanup if needed"""
-        tid = ctypes.c_long(tid)
-        if not inspect.isclass(exctype):
-            exctype = type(exctype)
-        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
-        if res == 0:
-            raise ValueError("invalid thread id")
-        elif res != 1:
-            # """if it returns a number greater than one, you're in trouble,
-            # and you should call it again with exc=NULL to revert the effect"""
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-            raise SystemError("PyThreadState_SetAsyncExc failed")
-
-    def stop_thread(self, thread):
-        self._async_raise(thread.ident, SystemExit)
 
     def setContent(self):
         v_box = QVBoxLayout()
 
         nameLab = QLabel(self.videoDownloadThread.video.name)
+        nameLab.setFixedSize(100, 20)
         v_box.addWidget(nameLab)
 
 
@@ -66,27 +68,53 @@ class DownloadItemView(QWidget):
 
         h_box.addWidget(self.progressBar)
 
-        self.progressLabe = QLabel()
+        self.progressLabe = QLabel('0%')
         h_box.addWidget(self.progressLabe)
 
         v_box.addLayout(h_box)
 
+        conntrol_h_box = QHBoxLayout()
+
+        playBtn = QPushButton('播放')
+        playBtn.clicked.connect(self.playBtnClick)
+        conntrol_h_box.addWidget(playBtn)
+
+        self.stopBtn = QPushButton('暂停')
+        self.stopBtn.clicked.connect(self.stopBtnClick)
+        conntrol_h_box.addWidget(self.stopBtn)
+
+
+        deleteBtn = QPushButton('删除')
+        deleteBtn.clicked.connect(self.deleteBtnClick)
+        conntrol_h_box.addWidget(deleteBtn)
+
+        v_box.addLayout(conntrol_h_box)
+
         self.setLayout(v_box)
 
-        self.thread = threading.Thread(target=self.updateProgressBar, name='asdasd')
-        self.thread.start()
+        self.videoDownloadThread.downLoader.downloadProgressSingal.connect(self.updateProgressBaraa)
 
-    def updateProgressBar(self):
-        progress = 0.0
-        while progress < 100:
-            print(progress)
-            speed = ('%0.2f%%' % progress)
-            self.progressLabe.setText(speed)
-            progress = self.videoDownloadThread.downLoader.progress
-            self.progressBar.setValue(progress)
-            time.sleep(1)
+    def updateProgressBaraa(self, progress):
+        self.progressBar.setValue(progress)
+        speed = ('%0.2f%%' % progress)
+        self.progressLabe.setText(speed)
 
-    def destroy(self, *args, **kwargs):
-        QWidget.destroy(self, *args, **kwargs)
-        self.stop_thread(self.thread)
+    def playBtnClick(self):
+        print('播放')
+        self.playerView = VideoPlayer(self.videoDownloadThread.downLoader.path)
+        self.playerView.show()
+
+    def stopBtnClick(self):
+        if  self.videoDownloadThread.downLoader.stop:
+            self.videoDownloadThread.downLoader.stop = False
+            self.stopBtn.setText("暂停")
+        else:
+            self.stopBtn.setText("开始")
+            self.videoDownloadThread.downLoader.stop = True
+
+
+    def deleteBtnClick(self):
+        self.deleteSingal.emit(self)
+        print('删除')
+
 

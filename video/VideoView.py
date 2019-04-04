@@ -8,6 +8,8 @@ from PySide2.QtCore import *
 
 import urllib.request
 
+from aiohttp import ClientSession
+
 
 from request import Reques
 from Downloader import Downloader
@@ -15,14 +17,20 @@ from DownManagerView import *
 from CacheManager import CacheManager
 from CacheVideoView import *
 
-import aiohttp
 import ssl
-import threading
-import time
 
+# from selenium import webdriver
+# from bs4 import BeautifulSoup
 
 ssl._create_default_https_context = ssl._create_unverified_context
 path = "/Users/iyunshu/Desktop/aaaaaa/"
+
+
+# chrome_options = webdriver.ChromeOptions()
+# chrome_options.add_argument('--headless')
+# driver = webdriver.Chrome(executable_path='/usr/local/lib/python3.6/chromedriver', options=chrome_options)
+# driver.implicitly_wait(10)
+
 
 
 class MyThread(QThread):
@@ -47,7 +55,6 @@ class LoadImageThread(QThread):
         QThread.__init__(self)
         self.url = url
 
-
     def run(self):
 
         headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0'}
@@ -68,7 +75,7 @@ class VideoDownloadThread(QThread):
 
     def run(self):
         tempPath = path + self.video.name + ".mp4"
-        self.downLoader = Downloader(self.video.downUrl, tempPath)
+        self.downLoader = Downloader(self.video.videoUrl, tempPath)
         self.downLoader.downLoad()
         self.singal.emit()
 
@@ -82,11 +89,12 @@ class TitleView(QLabel):
         self.setText(titleMode.name)
 
 class ItemView(QWidget):
-
-    def __init__(self, video):
+    singal = Signal(ItemView)
+    downloadCompleteSingal = Signal(ItemView)
+    def __init__(self, video, tempItemView):
         QWidget.__init__(self)
         ssl._create_default_https_context = ssl._create_unverified_context
-
+        self.tempItemView = tempItemView
         self.video = video
         self.container()
 
@@ -100,8 +108,6 @@ class ItemView(QWidget):
         nameL = QLabel()
         nameL.setText(self.video.name)
         self.b_layout.addWidget(nameL)
-
-
 
 
     def aaaaa(self):
@@ -120,18 +126,20 @@ class ItemView(QWidget):
         self.downloaderThread = VideoDownloadThread(self.video)
         self.downloaderThread.start()
         self.downloaderThread.singal.connect(self.downloadComplete)
-        self.downloadThreads.append(self.downloaderThread)
+        self.singal.emit(self)
 
 
     def downloadComplete(self):
         notic = self.downloaderThread.video.name + '下载完成'
         print(notic)
+        self.downloadCompleteSingal.emit(self)
 
 
 
 class MainUIaa(QWidget):
     def __init__(self):
         QWidget.__init__(self)
+
         ssl._create_default_https_context = ssl._create_unverified_context
 
         self.threadaaa = MyThread(1, 1)
@@ -147,9 +155,6 @@ class MainUIaa(QWidget):
         # self.grid = QGridLayout()
         self.listView = QListWidget()
         self.container()
-
-
-
 
     def container(self):
         b_Box = QVBoxLayout()
@@ -189,6 +194,7 @@ class MainUIaa(QWidget):
         self.downloadManagerView.show()
 
     def showCacheView(self):
+
         self.cacheView = CacheVideoView()
         self.cacheView.show()
 
@@ -216,16 +222,24 @@ class MainUIaa(QWidget):
 
         for i in range(len(self.videoModes)):
             videoMode = self.videoModes[i]
-            videoView = ItemView(videoMode)
-
             tempItem = QListWidgetItem()
             tempItem.setSizeHint(QSize(100, 100))
+            videoView = ItemView(videoMode, tempItem)
+            videoView.singal.connect(self.listItemClick)
+            videoView.downloadCompleteSingal.connect(self.downloadComplete)
 
             self.listView.addItem(tempItem)
             self.listView.setItemWidget(tempItem, videoView)
 
+    def listItemClick(self, view):
+        self.downloadThreads.append(view.downloaderThread)
 
-            # self.grid.addWidget(videoView, i / 3, i % 3)
+    def downloadComplete(self, view):
+
+        self.downloadThreads.remove(view.downloaderThread)
+        view.downloaderThread.deleteLater()
+        view.downloaderThread = None
+        # self.listView.takeItem(self.listView.row(view.tempItemView))
 
 
 
