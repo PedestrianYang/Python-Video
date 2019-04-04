@@ -21,7 +21,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 #2.初始化播放器，需要放在主线程中，放在子线程则不响应（待定问题）
 #3.跳帧处理，定位视频播放时间时，需要在循环内部进行set关键帧，然后立即发出信号槽通知播放进度条与时间，由于子线程原因，可能导致进度条跳动
 #4.QSlider作为播放进度条，鼠标左键点击不能响应事件，必须重写mousePressEvent点击事件与mouseReleaseEvent点击松开事件
-
+#5.关闭界面时，清理线程
 
 class MyQSlider(QSlider):
     clickSingal = Signal(int)
@@ -53,19 +53,38 @@ class MyQSlider(QSlider):
 
 
 class MyThread(QThread):
+    initCompleteSingal = Signal()
     singal = Signal(float)
     complete = Signal()
-    def __init__(self, videoCapture, fps):
+    def __init__(self, playPath):
         QThread.__init__(self)
-        self.videoCapture = videoCapture
-        self.fps = fps
+        self.playPath = playPath
+
+    def initViedoPayer(self):
+        #获得视频的格式
+        self.videoCapture = cv2.VideoCapture(self.playPath)
+        #获得码率及尺寸
+        self.fps = self.videoCapture.get(cv2.CAP_PROP_FPS)
+        self.fps_num = self.videoCapture.get(cv2.CAP_PROP_FRAME_COUNT)
+
+        size = (int(self.videoCapture.get(cv2.CAP_PROP_FRAME_WIDTH)),
+                int(self.videoCapture.get(cv2.cv2.CAP_PROP_FRAME_HEIGHT)))
+
+
+        #指定写视频的格式, I420-avi, MJPG-mp4
+        self.videoWriter = cv2.VideoWriter('oto_other.mp4', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), self.fps, size)
+        self.initCompleteSingal.emit()
+
+    def run(self):
+        self.initViedoPayer()
+        # self.videoCapture = videoCapture
         self.isPlay = True
         self.isRun = True
         self.shouldUpdateProgress = False
         self.pos_fps = 0
         self.count = 0
 
-    def run(self):
+
 
         while self.isRun:
 
@@ -101,7 +120,14 @@ class VideoPlayer(QWidget):
         self.isSliding = False
         self.slidvalue = 0
 
-        self.initViedoPayer()
+
+        self.threadqqq = MyThread(self.playPath)
+        self.threadqqq.start()
+        self.threadqqq.initCompleteSingal.connect(self.initComplete)
+        self.threadqqq.singal.connect(self.thresetContainer)
+        self.threadqqq.complete.connect(self.deleteThread)
+
+
 
         v_box = QVBoxLayout()
         self.setContentsMargins(0,0,0,0)
@@ -111,7 +137,7 @@ class VideoPlayer(QWidget):
         v_box.addWidget(self.labe)
 
         self.progressBar = MyQSlider(Qt.Horizontal)
-        self.progressBar.setFixedSize(int(self.videoCapture.get(cv2.CAP_PROP_FRAME_WIDTH)) / 2, 20)
+
         self.progressBar.setRange(0,99)
 
         self.progressBar.clickSingal.connect(self.progressBarClick)
@@ -122,13 +148,6 @@ class VideoPlayer(QWidget):
 
         self.timeLab = QLabel()
 
-        self.timeAmount = self.fps_num / self.fps
-
-        m, s = divmod(self.timeAmount, 60)
-        h, m = divmod(m, 60)
-        self.amutnTimeFormt = "%02d:%02d:%02d" % (h, m, s)
-        print ("%02d:%02d:%02d" % (h, m, s))
-        self.timeLab.setText('0:0:0/' + self.amutnTimeFormt)
         v_box.addWidget(self.timeLab)
 
         h_box = QHBoxLayout()
@@ -142,68 +161,50 @@ class VideoPlayer(QWidget):
 
         v_box.addLayout(h_box)
 
-        self.threadqqq = MyThread(self.videoCapture,self.fps)
-        self.threadqqq.start()
-        self.threadqqq.singal.connect(self.thresetContainer)
-        self.threadqqq.complete.connect(self.deleteThread)
+    def initComplete(self):
+        self.progressBar.setFixedSize(int(self.threadqqq.videoCapture.get(cv2.CAP_PROP_FRAME_WIDTH)) / 2, 20)
+        self.setTimeLab(0)
 
+
+    def setTimeLab(self, progress):
+
+        self.timeAmount = self.threadqqq.fps_num / self.threadqqq.fps
+        m, s = divmod(self.timeAmount, 60)
+        h, m = divmod(m, 60)
+        self.amutnTimeFormt = "%02d:%02d:%02d" % (h, m, s)
+
+        currntTime = self.timeAmount * (progress / self.threadqqq.fps_num)
+        m, s = divmod(currntTime, 60)
+        h, m = divmod(m, 60)
+        currntTimeFormt = "%02d:%02d:%02d" % (h, m, s)
+        self.timeLab.setText(currntTimeFormt+ '/' + self.amutnTimeFormt)
 
     def progressBarClick(self,vaule):
         print('progressBarClick')
         self.isSliding = True
         self.slidvalue = vaule
-        progress = self.slidvalue / 100 * self.fps_num
-        currntTime = self.timeAmount * (progress / self.fps_num)
-        m, s = divmod(currntTime, 60)
-        h, m = divmod(m, 60)
-        currntTimeFormt = "%02d:%02d:%02d" % (h, m, s)
-        self.timeLab.setText(currntTimeFormt+ '/' + self.amutnTimeFormt)
+        progress = self.slidvalue / 100 * self.threadqqq.fps_num
+        self.setTimeLab(progress)
 
 
     def progressBarValueChange(self, vaule):
         print('progressBarValueChange')
         self.isSliding = True
         self.slidvalue = vaule
-        progress = self.slidvalue / 100 * self.fps_num
-        currntTime = self.timeAmount * (progress / self.fps_num)
-        m, s = divmod(currntTime, 60)
-        h, m = divmod(m, 60)
-        currntTimeFormt = "%02d:%02d:%02d" % (h, m, s)
-        self.timeLab.setText(currntTimeFormt+ '/' + self.amutnTimeFormt)
+        progress = self.slidvalue / 100 * self.threadqqq.fps_num
+        self.setTimeLab(progress)
+
 
     def valueChangeComplete(self):
 
         self.isSliding = False
-        pos_fps = self.slidvalue / 100 * self.fps_num
+        pos_fps = self.slidvalue / 100 * self.threadqqq.fps_num
         self.threadqqq.pos_fps = pos_fps
         self.threadqqq.shouldUpdateProgress = True
         print("valueChangeComplete")
         # self.videoCapture.set(cv2.CAP_PROP_POS_FRAMES, pos_fps)
 
-    def starDownload(self, progress):
-        if progress > 0.02 and self.threadqqq.isRunning() == False:
-            print('开始播放')
-            self.threadqqq.start()
 
-    def downloadComplete(self):
-        print('asdasd')
-
-
-    def initViedoPayer(self):
-        #获得视频的格式
-        self.videoCapture = cv2.VideoCapture(self.playPath)
-
-        #获得码率及尺寸
-        self.fps = self.videoCapture.get(cv2.CAP_PROP_FPS)
-        self.fps_num = self.videoCapture.get(cv2.CAP_PROP_FRAME_COUNT)
-
-        size = (int(self.videoCapture.get(cv2.CAP_PROP_FRAME_WIDTH)),
-                int(self.videoCapture.get(cv2.cv2.CAP_PROP_FRAME_HEIGHT)))
-
-
-
-        #指定写视频的格式, I420-avi, MJPG-mp4
-        self.videoWriter = cv2.VideoWriter('oto_other.mp4', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), self.fps, size)
 
     def stopBtnClick(self):
         if self.threadqqq != None:
@@ -214,9 +215,9 @@ class VideoPlayer(QWidget):
                 self.threadqqq.start()
                 self.stopBtn.setText("停止")
         else:
-            self.initViedoPayer()
-            self.threadqqq = MyThread(self.videoCapture,self.fps)
+            self.threadqqq = MyThread(self.playPath)
             self.threadqqq.start()
+            self.threadqqq.initCompleteSingal.connect(self.initComplete)
             self.threadqqq.singal.connect(self.thresetContainer)
             self.threadqqq.complete.connect(self.deleteThread)
 
@@ -228,7 +229,7 @@ class VideoPlayer(QWidget):
 
 
     def deleteThread(self):
-        self.videoCapture.release()
+        self.threadqqq.videoCapture.release()
         self.threadqqq.deleteLater()
         self.threadqqq = None
 
@@ -237,12 +238,10 @@ class VideoPlayer(QWidget):
 
         if self.isSliding == False:
 
-            currntTime = self.timeAmount * (progress / self.fps_num)
-            m, s = divmod(currntTime, 60)
-            h, m = divmod(m, 60)
-            currntTimeFormt = "%02d:%02d:%02d" % (h, m, s)
-            self.timeLab.setText(currntTimeFormt+ '/' + self.amutnTimeFormt)
-
+            self.setTimeLab(progress)
             self.labe.setPixmap(self.threadqqq.pixmap)
+            self.progressBar.setValue((progress / self.threadqqq.fps_num) * 100)
 
-            self.progressBar.setValue((progress / self.fps_num) * 100)
+    def closeEvent(self, event):
+        self.closeBtnClick()
+

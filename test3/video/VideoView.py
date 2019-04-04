@@ -17,21 +17,19 @@ from video.DownManagerView import *
 from video.CacheManager import CacheManager
 from video.CacheVideoView import *
 
-import aiohttp
 import ssl
-import threading
-import time
-from selenium import webdriver
-from bs4 import BeautifulSoup
+
+# from selenium import webdriver
+# from bs4 import BeautifulSoup
 
 ssl._create_default_https_context = ssl._create_unverified_context
 path = "/Users/iyunshu/Desktop/aaaaaa/"
 
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument('--headless')
-driver = webdriver.Chrome(executable_path='/usr/local/lib/python3.6/chromedriver', options=chrome_options)
-driver.implicitly_wait(10)
+# chrome_options = webdriver.ChromeOptions()
+# chrome_options.add_argument('--headless')
+# driver = webdriver.Chrome(executable_path='/usr/local/lib/python3.6/chromedriver', options=chrome_options)
+# driver.implicitly_wait(10)
 
 
 
@@ -77,7 +75,7 @@ class VideoDownloadThread(QThread):
 
     def run(self):
         tempPath = path + self.video.name + ".mp4"
-        self.downLoader = Downloader(self.video.downUrl, tempPath)
+        self.downLoader = Downloader(self.video.videoUrl, tempPath)
         self.downLoader.downLoad()
         self.singal.emit()
 
@@ -125,9 +123,6 @@ class ItemView(QWidget):
         self.aaaaa()
 
     def mousePressEvent(self, event):
-        if self.video.downUrl == None:
-            print('还未获取下载地址')
-            return
         self.downloaderThread = VideoDownloadThread(self.video)
         self.downloaderThread.start()
         self.downloaderThread.singal.connect(self.downloadComplete)

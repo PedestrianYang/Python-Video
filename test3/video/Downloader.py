@@ -1,14 +1,12 @@
 
 import os.path
-import requests
-import sys
-from contextlib import closing
-from selenium import webdriver
+import ssl
 from bs4 import BeautifulSoup
 from PySide2.QtCore import *
-import ssl
+from video.request import Reques
+from contextlib import closing
 import time
-from video.request import *
+import requests
 
 class Downloader(QObject):
     downloadProgressSingal = Signal(float)
@@ -19,24 +17,24 @@ class Downloader(QObject):
         self.path = path
         self.request = Reques()
         # chrome_options = webdriver.ChromeOptions()
-        # chrome_options.add_argument('--headless')
+        # chrome_options.add_argument('--headless') #使用浏览器加载，却不用打开
         #
         # # driver=webdriver.Firefox(executable_path = '/usr/local/lib/python3.6/geckodriver')
         # self.driver = webdriver.Chrome(executable_path='/usr/local/lib/python3.6/chromedriver', options=chrome_options)
         # self.driver.implicitly_wait(10)
-        # self.progress = 0
-        # self.stop = False
-        # self.close = False
-        # self.isDownloading = False
+        self.progress = 0
+        self.stop = False
+        self.close = False
+        self.isDownloading = False
 
 
 
     def downLoad(self):
 
-        # self.driver.get(self.video_url)
+        # self.driver.get(self.video_url) #获取浏览器内容
         # soup1 = BeautifulSoup(self.driver.page_source, "html.parser")
 
-        resp = self.request.doRequest(self.video.videoUrl)
+        resp = self.request.doRequest(self.video_url)
         soup1 = BeautifulSoup(resp, "html.parser")
 
         items = soup1.findAll('a')
@@ -46,6 +44,8 @@ class Downloader(QObject):
             if href != None and href.endswith('.mp4'):
                 dowloadUrl = href
                 break
+
+        print(dowloadUrl)
         self._downloader(dowloadUrl)
 
     def _downloader(self, dowloadUrl):
