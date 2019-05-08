@@ -114,16 +114,16 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="request.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="request.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/video/request.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" selection-start-line="11" selection-end-line="11" />
+            <state relative-caret-position="225">
+              <caret line="15" column="20" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="20" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Auto.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Auto.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Auto.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="330">
@@ -155,7 +155,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>videopaa</find>
       <find>mousePressEvent</find>
       <find>self.downloaderThread</find>
       <find>FooConnection</find>
@@ -185,6 +184,7 @@
       <find>ItemView</find>
       <find>setSizeHint</find>
       <find>oriUrl</find>
+      <find>getTargetUrl</find>
     </findStrings>
     <dirStrings>
       <dir>/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages/vlc</dir>
@@ -700,12 +700,12 @@
       <workItem from="1555035167324" duration="552000" />
       <workItem from="1555375114023" duration="4811000" />
       <workItem from="1555577302267" duration="11000" />
-      <workItem from="1557299848948" duration="209000" />
+      <workItem from="1557299848948" duration="508000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="245016000" />
+    <option name="totallyTimeSpent" value="245315000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1120,17 +1120,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/video/request.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Auto.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
           <caret line="32" column="29" lean-forward="true" selection-start-line="32" selection-start-column="29" selection-end-line="32" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/video/request.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="20" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="20" />
         </state>
       </provider>
     </entry>
