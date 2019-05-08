@@ -9,19 +9,12 @@ import ssl
 class Reques:
     def __init__(self):
         ssl._create_default_https_context = ssl._create_unverified_context
-        self.oriUrl = "https://github.com/fcwporn/-/wiki"
-        self.temptargetUrl = "https://fcww11.com"
+
+        self.temptargetUrl = ""
 
 
     def getTargetUrl(self):
-        # rep = self.doRequest(self.oriUrl)
-        # soup1 = BeautifulSoup(rep,"html.parser")
-        # div = soup1.find(attrs={'class':'markdown-body'})
-        # hres = div.findAll('a')
-        # urls = []
-        # for a in hres:
-        #     if a.string.startswith('https://fcw') or a.string.startswith('http://fcw'):
-        #         urls.append(a.string)
+
 
         rep = self.doRequest(self.temptargetUrl)
         soup1 = BeautifulSoup(rep,"html.parser")
