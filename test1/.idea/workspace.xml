@@ -17,7 +17,7 @@
     <SUITE FILE_PATH="coverage/test1$video.coverage" NAME="video Coverage Results" MODIFIED="1553239492009" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/test1$Unnamed__2_.coverage" NAME="Unnamed (2) Coverage Results" MODIFIED="1536893272306" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/test1$qqBot.coverage" NAME="qqBot Coverage Results" MODIFIED="1537663050024" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/test1$test3.coverage" NAME="test3 Coverage Results" MODIFIED="1554277109886" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/test1$test3.coverage" NAME="test3 Coverage Results" MODIFIED="1555577463085" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/test1$Unnamed__1_.coverage" NAME="Unnamed (1) Coverage Results" MODIFIED="1534901300235" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/test1$.coverage" NAME="对比图片 Coverage Results" MODIFIED="1543892333765" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
@@ -26,17 +26,8 @@
       <file leaf-file-name="微信定时发送.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/微信定时发送.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
+            <state relative-caret-position="15">
               <caret line="19" column="31" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="结合浏览器抢票.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/结合浏览器抢票.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2400">
-              <caret line="166" column="30" selection-start-line="166" selection-start-column="30" selection-end-line="166" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -44,11 +35,29 @@
       <file leaf-file-name=" test3.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ test3.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="30" />
+            <state relative-caret-position="96">
+              <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="48" />
               <folding>
                 <element signature="e#14#27#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test1.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test1.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="540">
+              <caret line="41" column="36" selection-start-line="41" selection-start-column="14" selection-end-line="41" selection-end-column="36" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test2.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test2.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="28" column="38" selection-start-line="28" selection-start-column="34" selection-end-line="28" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -65,8 +74,8 @@
       <file leaf-file-name="wintest3.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wintest3.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="30" />
+            <state relative-caret-position="915">
+              <caret line="63" column="56" selection-start-line="63" selection-start-column="56" selection-end-line="63" selection-end-column="56" />
               <folding>
                 <element signature="e#14#27#0" expanded="true" />
               </folding>
@@ -178,8 +187,8 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1096" />
-    <option name="y" value="95" />
+    <option name="x" value="938" />
+    <option name="y" value="167" />
     <option name="width" value="1576" />
     <option name="height" value="899" />
   </component>
@@ -188,8 +197,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -210,7 +217,9 @@
           <select />
         </subPane>
       </pane>
+      <pane id="AndroidView" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -687,12 +696,14 @@
       <workItem from="1553582571421" duration="2406000" />
       <workItem from="1553647084798" duration="2233000" />
       <workItem from="1553667868543" duration="70000" />
-      <workItem from="1554274771038" duration="2554000" />
+      <workItem from="1554274771038" duration="3263000" />
+      <workItem from="1554278291559" duration="5000" />
+      <workItem from="1555577348618" duration="625000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="213013000" />
+    <option name="totallyTimeSpent" value="214352000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -704,7 +715,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1096" y="95" width="1576" height="899" extended-state="0" />
+    <frame x="938" y="167" width="1576" height="899" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
@@ -715,20 +726,20 @@
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5005325" side_tool="true" weight="0.32205367" />
       <window_info anchor="right" id="Maven Projects" order="3" weight="0.32946002" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49946752" weight="0.31322208" />
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49946752" visible="true" weight="0.2169448" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.32905483" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25814864" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26466754" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="right" id="SciView" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info id="UI Designer" order="2" />
       <window_info anchor="right" id="Theme Preview" order="3" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3990665" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Messages" order="7" />
@@ -925,24 +936,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="28" column="38" selection-start-line="28" selection-start-column="34" selection-end-line="28" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/qq.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
           <caret line="15" column="37" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="615">
-          <caret line="41" column="36" selection-start-line="41" selection-start-column="14" selection-end-line="41" selection-end-column="36" />
         </state>
       </provider>
     </entry>
@@ -1054,20 +1051,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test3.py" />
-    <entry file="file://$PROJECT_DIR$/微信定时发送.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="19" column="31" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/结合浏览器抢票.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2400">
-          <caret line="166" column="30" selection-start-line="166" selection-start-column="30" selection-end-line="166" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/qq转发.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
@@ -1075,20 +1058,48 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/test1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="41" column="36" selection-start-line="41" selection-start-column="14" selection-end-line="41" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="28" column="38" selection-start-line="28" selection-start-column="34" selection-end-line="28" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/wintest3.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="30" />
+        <state relative-caret-position="915">
+          <caret line="63" column="56" selection-start-line="63" selection-start-column="56" selection-end-line="63" selection-end-column="56" />
           <folding>
             <element signature="e#14#27#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/结合浏览器抢票.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/微信定时发送.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="19" column="31" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ test3.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="30" />
+        <state relative-caret-position="96">
+          <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="48" />
           <folding>
             <element signature="e#14#27#0" expanded="true" />
           </folding>

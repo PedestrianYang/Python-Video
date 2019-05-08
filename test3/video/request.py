@@ -2,24 +2,15 @@ from video.VideoModel import Video, Title
 
 __author__ = 'ymq'
 import urllib.request
-from selenium import webdriver
 import urllib
-import sys
-import re
-import time
-
-import os.path
-import requests
 from bs4 import BeautifulSoup
-from contextlib import closing
 import ssl
-from video.Downloader import Downloader
 
 class Reques:
     def __init__(self):
         ssl._create_default_https_context = ssl._create_unverified_context
-        self.oriUrl = ""
-        self.temptargetUrl = ""
+        self.oriUrl = "https://github.com/fcwporn/-/wiki"
+        self.temptargetUrl = "https://fcww11.com"
 
 
     def getTargetUrl(self):

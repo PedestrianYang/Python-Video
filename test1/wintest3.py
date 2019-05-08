@@ -18,7 +18,7 @@ from contextlib import closing
 class DownLoadVideo:
     def __init__(self):
         ssl._create_default_https_context = ssl._create_unverified_context
-        self.temptargetUrl = ""
+        self.temptargetUrl = "https://fcww11.com"
         self.newVideoUrl = ''
         # self.path = "/Users/iyunshu/Desktop/aaaaaa/"
         self.videoUrls = []
