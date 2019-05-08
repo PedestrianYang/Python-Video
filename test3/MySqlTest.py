@@ -8,7 +8,7 @@ db = pymysql.connect("localhost","root","root","test" )
 cursor = db.cursor()
 
 # SQL 插入语句
-sql = "INSERT INTO Video(NAME,IMAGEURL, DOWNLOADURL)  VALUES ('享受硬屌用力抽插的美人妻', 'https://www.fcww11.com/contents/videos_screenshots/38000/38886/180x135/5.jpg',  'https://www.fcww11.com/videos/38886/24d462b8558d399a6da183512812aa04/')"
+sql = "INSERT INTO Video(NAME,IMAGEURL, DOWNLOADURL)  VALUES ('12121', '1231231',  '12312312312')"
 try:
     # 执行sql语句
     cursor.execute(sql)

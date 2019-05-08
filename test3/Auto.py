@@ -14,7 +14,7 @@ import time
 class Request11:
     def __init__(self):
         ssl._create_default_https_context = ssl._create_unverified_context
-        self.temptargetUrl = "https://fcww11.com"
+        self.temptargetUrl = ""
         self.path = "/Users/iyunshu/Desktop/aaaaaa/"
 
     def getTitle(self):
